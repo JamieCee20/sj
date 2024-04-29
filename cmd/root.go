@@ -14,6 +14,7 @@ var proxy string
 var quiet bool
 var swaggerURL string
 var timeout int64
+var noSsl bool
 
 var rootCmd = &cobra.Command{
 	Use:   "sj",
@@ -61,5 +62,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&apiTarget, "target", "T", "", "Manually set a target for the requests to be made if separate from the host the documentation resides on.")
 	rootCmd.PersistentFlags().Int64VarP(&timeout, "timeout", "t", 30, "Set the request timeout period.")
 	rootCmd.PersistentFlags().StringVarP(&swaggerURL, "url", "u", "", "Loads the documentation file from a URL")
+	rootCmd.PersistentFlags().BoolVarP(&noSsl, "noSsl", "n", false, "Use http instead of https.")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }

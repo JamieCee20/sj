@@ -191,6 +191,14 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 				u.Path = u.Path + newPath
 				u.RawQuery = query.Encode()
 
+				/* If localhost requiring http, stop from going to https */
+				noSsl, _ := rootCmd.PersistentFlags().GetBool("noSsl")
+				if noSsl {
+					newUrl = strings.ReplaceAll(u.String(), "https://", "http://")
+				} else {
+					newUrl = u.String()
+				}
+
 				if command == "automate" {
 					_, _, sc := MakeRequest(client, method, u.String(), timeout, bytes.NewReader([]byte(bodyData)))
 					writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)])
