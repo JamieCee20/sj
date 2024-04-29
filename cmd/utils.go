@@ -93,6 +93,7 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 	var apiInQuery bool = false
 	var pathMap = make(map[string]bool)
 	var paths []string
+	var newUrl string
 
 	fullUrl, _ := url.Parse(swaggerURL)
 	newDoc := UnmarshalSpec(bodyBytes)
@@ -200,7 +201,7 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 				}
 
 				if command == "automate" {
-					_, _, sc := MakeRequest(client, method, u.String(), timeout, bytes.NewReader([]byte(bodyData)))
+					_, _, sc := MakeRequest(client, method, newUrl, timeout, bytes.NewReader([]byte(bodyData)))
 					writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)])
 				} else if command == "prepare" {
 					if bodyData == nil {
