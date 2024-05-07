@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"strconv"
 
 	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/getkin/kin-openapi/openapi2conv"
@@ -138,6 +139,8 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 				var bodyData []byte
 				body := make(map[string]any)
 
+				accessibleEndpoint := op.Extensions["x-accessible-endpoint"].(bool)
+
 				for _, param := range op.Parameters {
 					if param.Ref != "" || param.Value == nil {
 						continue
@@ -202,7 +205,15 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 
 				if command == "automate" {
 					_, _, sc := MakeRequest(client, method, newUrl, timeout, bytes.NewReader([]byte(bodyData)))
-					writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)])
+					if accessibleEndpoint && sc != 200{
+						logManualError(sc, u.String(), method, "Route should be accessible, but returned " + strconv.Itoa(sc), 522)
+					} else if !accessibleEndpoint && sc == 200 {
+						logManualError(sc, u.String(), method, "Route should not be accessible, but returned " + strconv.Itoa(sc), 522)
+					// } else if sc == 200 && !accessibleEndpoint {
+						// logManualError(sc, u.String(), method, "Route should not be accessible, but returned 200", 522)
+					} else {
+						writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)]) 
+					}
 				} else if command == "prepare" {
 					if bodyData == nil {
 						if len(Headers) == 0 {

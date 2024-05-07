@@ -21,6 +21,7 @@ var (
 	riskSurveyed           bool = false
 	UserAgent              string
 	userChoice             string
+	accessibleEndpoint    bool = false
 )
 
 func MakeRequest(client http.Client, method, target string, timeout int64, reqData io.Reader) ([]byte, string, int) {
@@ -108,6 +109,7 @@ func MakeRequest(client http.Client, method, target string, timeout int64, reqDa
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	bodyString := string(bodyBytes)
 	requestStatus = resp.StatusCode
+
 
 	return bodyBytes, bodyString, requestStatus
 }

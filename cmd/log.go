@@ -68,6 +68,15 @@ func logSkipped(status int, target, method string) {
 	}).Warn("Request skipped (dangerous keyword found).")
 }
 
+func logManualError(status int, target, method, errorMsg string, code int) {
+	log.WithFields(log.Fields{
+		"Status":  status,
+		"Target":  target,
+		"Method":  method,
+		"Code": code,
+	}).Error(errorMsg)
+}
+
 func logUnauth(status int, target, method, errorMsg string) {
 	if errorMsg == "" {
 		errorMsg = "Unauthorized."

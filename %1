@@ -1,0 +1,3 @@
+time="2024-05-07T13:33:33+01:00" level=info msg="Gathering API details.\n\n"
+time="2024-05-07T13:33:33+01:00" level=info msg="Endpoint accessible!" Method=GET Status=200 Target="https://localhost:8080/api/v1/test"
+time="2024-05-07T13:33:33+01:00" level=error msg="Route should be accessible, but returned 401" Code=522 Method=GET Status=401 Target="https://localhost:8080/api/v1/bread"
