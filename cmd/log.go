@@ -4,7 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func writeLog(sc int, target, method string, errorMsg string) {
+func writeLog(sc int, target, method string, errorMsg string, rb string) {
 	if sc != 200 {
 		if sc == 401 || sc == 403 {
 			logUnauth(sc, target, method, errorMsg)
@@ -13,7 +13,7 @@ func writeLog(sc int, target, method string, errorMsg string) {
 		} else if sc == 0 {
 			logSkipped(sc, target, method)
 		} else if sc == 404 {
-			logNotFound(sc, target, method, errorMsg)
+			logNotFound(sc, target, method, errorMsg, rb)
 		} else {
 			logManual(sc, target, method, errorMsg)
 		}
@@ -41,15 +41,20 @@ func logManual(status int, target, method, errorMsg string) {
 	}).Warn(errorMsg)
 }
 
-func logNotFound(status int, target, method, errorMsg string) {
+func logNotFound(status int, target, method, errorMsg string, rb string) {
 	if errorMsg == "" {
 		errorMsg = "Endpoint not found."
 	}
-	log.WithFields(log.Fields{
-		"Status": status,
-		"Target": target,
-		"Method": method,
-	}).Error(errorMsg)
+
+	if rb != "" {
+		logManualError(status, target, method, errorMsg, rb, status)
+	} else {
+		log.WithFields(log.Fields{
+			"Status": status,
+			"Target": target,
+			"Method": method,
+		}).Error(errorMsg)
+	}
 }
 
 func logRedirect(status int, target, method string) {
@@ -68,12 +73,13 @@ func logSkipped(status int, target, method string) {
 	}).Warn("Request skipped (dangerous keyword found).")
 }
 
-func logManualError(status int, target, method, errorMsg string, code int) {
+func logManualError(status int, target, method, errorMsg string, rb string, code int) {
 	log.WithFields(log.Fields{
 		"Status":  status,
 		"Target":  target,
 		"Method":  method,
 		"Code": code,
+		"Message": rb,
 	}).Error(errorMsg)
 }
 

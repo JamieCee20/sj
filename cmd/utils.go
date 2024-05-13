@@ -204,15 +204,13 @@ func GenerateRequests(bodyBytes []byte, client http.Client, command string) []st
 				}
 
 				if command == "automate" {
-					_, _, sc := MakeRequest(client, method, newUrl, timeout, bytes.NewReader([]byte(bodyData)))
+					_, rb, sc := MakeRequest(client, method, newUrl, timeout, bytes.NewReader([]byte(bodyData)))
 					if accessibleEndpoint && sc != 200{
-						logManualError(sc, u.String(), method, "Route should be accessible, but returned " + strconv.Itoa(sc), 522)
+						logManualError(sc, u.String(), method, "Route should be accessible, but returned " + strconv.Itoa(sc), rb, 522)
 					} else if !accessibleEndpoint && sc == 200 {
-						logManualError(sc, u.String(), method, "Route should not be accessible, but returned " + strconv.Itoa(sc), 522)
-					// } else if sc == 200 && !accessibleEndpoint {
-						// logManualError(sc, u.String(), method, "Route should not be accessible, but returned 200", 522)
+						logManualError(sc, u.String(), method, "Route should not be accessible, but returned " + strconv.Itoa(sc), rb, 522)
 					} else {
-						writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)]) 
+						writeLog(sc, u.String(), method, errorDescriptions[fmt.Sprint(sc)], rb) 
 					}
 				} else if command == "prepare" {
 					if bodyData == nil {

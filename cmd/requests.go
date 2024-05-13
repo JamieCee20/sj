@@ -110,6 +110,5 @@ func MakeRequest(client http.Client, method, target string, timeout int64, reqDa
 	bodyString := string(bodyBytes)
 	requestStatus = resp.StatusCode
 
-
 	return bodyBytes, bodyString, requestStatus
 }
